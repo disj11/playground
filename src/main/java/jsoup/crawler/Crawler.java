@@ -55,7 +55,7 @@ public abstract class Crawler {
         int depth = 0;
         List<String> visitUrl = new ArrayList<>();
 
-        // BFS 로 검색된 url 순회하며 파싱
+        // 검색된 url 을 BFS 로 순회하며 파싱
         while (!urlQueue.isEmpty()) {
             // 지정했던 depth 가 넘으면 종료
             if (depth > config.getMaxDepth()) {
