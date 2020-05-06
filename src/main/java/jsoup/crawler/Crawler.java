@@ -44,7 +44,10 @@ public abstract class Crawler {
         Queue<String> queue = new LinkedList<>();
         queue.add(url);
 
-        String crawlDomain = url.substring(0, url.indexOf("/", url.indexOf("://") + 3));
+        int endIndex = url.indexOf("/", url.indexOf("://") + 3);
+        endIndex = endIndex < 0 ? url.length() : endIndex;
+
+        String crawlDomain = url.substring(0, endIndex);
         start(crawlDomain, queue);
     }
 
