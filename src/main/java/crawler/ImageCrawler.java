@@ -32,7 +32,7 @@ public class ImageCrawler {
     }
 
     private boolean validExt(String imageUrl, EnumSet<ImageExtension> imageExtensions) {
-        if (imageExtensions == null) {
+        if (imageExtensions == null || imageExtensions.isEmpty()) {
             return true;
         }
 
