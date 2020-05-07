@@ -13,7 +13,7 @@ public class WebDriverBase implements AutoCloseable {
         this.setDriver();
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
+        options.setHeadless(true);
         this.driver = new ChromeDriver(options);
     }
 
