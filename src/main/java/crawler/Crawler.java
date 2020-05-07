@@ -3,6 +3,8 @@ package crawler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class Crawler {
+    private static final Logger logger = LoggerFactory.getLogger(Crawler.class);
     private static final Pattern filters = Pattern.compile(".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf|rm|smil|wmv|swf|wma|zip|rar|gz))$");
     private final WebDriverBase driver;
 
@@ -71,7 +74,7 @@ public class Crawler {
             webDriver.get(validUrl);
             consumer.accept(Jsoup.parse(webDriver.getPageSource(), crawlDomain));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn("크롤링에 실패하였습니다. url : {}", validUrl, e);
         }
     }
 }

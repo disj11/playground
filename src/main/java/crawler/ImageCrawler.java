@@ -4,13 +4,15 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class ImageCrawler {
+    private static final Logger logger = LoggerFactory.getLogger(ImageCrawler.class);
     private final Crawler crawler;
 
     public ImageCrawler(WebDriverBase driver) {
@@ -32,6 +34,10 @@ public class ImageCrawler {
     }
 
     private boolean validExt(String imageUrl, EnumSet<ImageExtension> imageExtensions) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return false;
+        }
+
         if (imageExtensions == null || imageExtensions.isEmpty()) {
             return true;
         }
@@ -64,8 +70,8 @@ public class ImageCrawler {
                     .execute();
             String length = resp.header("Content-Length");
             return Long.parseLong(length);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.warn("Content-Length 확인해 실패하였습니다. url : {}", url);
             return 0;
         }
     }
