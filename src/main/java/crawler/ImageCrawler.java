@@ -2,35 +2,36 @@ package crawler;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.EnumSet;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-public class ImageCrawler {
+public abstract class ImageCrawler extends Crawler<ImageCrawlingOptions> {
     private static final Logger logger = LoggerFactory.getLogger(ImageCrawler.class);
-    private final Crawler crawler;
-
-    public ImageCrawler(WebDriverBase driver) {
-        this.crawler = new Crawler(driver);
+    public ImageCrawler(WebDriverBase driver, ImageCrawlingOptions options) {
+        super(driver, options);
     }
 
-    public void start(ImageCrawlingOptions options, Consumer<Element> consumer) {
-        crawler.start(options, document -> {
-            Elements imgElements = document.select("img");
-            for (Element imgElement : imgElements) {
-                String imageUrl = imgElement.absUrl("src");
-                if (!validExt(imageUrl, options.getExtensions()) || !validCapacity(imageUrl, options.getMinBytes(), options.getMaxBytes())) {
-                    continue;
-                }
+    public abstract void accept(ImageCrawlResult result);
 
-                consumer.accept(imgElement);
+    @Override
+    public void accept(CrawlResult result) {
+        Document document = result.getDocument();
+        Elements imgElements = document.select("img");
+
+        for (Element imgElement : imgElements) {
+            String imageUrl = imgElement.absUrl("src");
+            if (!validExt(imageUrl, options.getExtensions()) || !validCapacity(imageUrl, options.getMinBytes(), options.getMaxBytes())) {
+                continue;
             }
-        });
+
+            accept(new ImageCrawlResult(result.getDocument(), result.getDepth(), imgElement));
+        }
     }
 
     private boolean validExt(String imageUrl, EnumSet<ImageExtension> imageExtensions) {

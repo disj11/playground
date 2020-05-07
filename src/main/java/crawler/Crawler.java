@@ -1,7 +1,6 @@
 package crawler;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,16 +12,18 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-public class Crawler {
+public abstract class Crawler<T extends CrawlingOptions> implements Consumer<CrawlResult> {
     private static final Logger logger = LoggerFactory.getLogger(Crawler.class);
     private static final Pattern filters = Pattern.compile(".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf|rm|smil|wmv|swf|wma|zip|rar|gz))$");
-    private final WebDriverBase driver;
+    protected final WebDriverBase driver;
+    protected final T options;
 
-    public Crawler(WebDriverBase driver) {
+    public Crawler(WebDriverBase driver, T options) {
         this.driver = driver;
+        this.options = options;
     }
 
-    public void start(CrawlingOptions options, Consumer<Document> consumer) {
+    public void start() {
         Set<String> visitedSet = new HashSet<>();
         Queue<String> urlQueue = new LinkedList<>();
         urlQueue.add(options.getUrl());
@@ -42,7 +43,7 @@ public class Crawler {
                     continue;
                 }
 
-                crawl(url, crawlDomain, consumer);
+                crawl(url, crawlDomain, currentDepth);
             }
 
             currentDepth++;
@@ -68,11 +69,11 @@ public class Crawler {
         return false;
     }
 
-    private void crawl(String validUrl, String crawlDomain, Consumer<Document> consumer) {
+    protected void crawl(String validUrl, String crawlDomain, int depth) {
         try {
             WebDriver webDriver = driver.getDriver();
             webDriver.get(validUrl);
-            consumer.accept(Jsoup.parse(webDriver.getPageSource(), crawlDomain));
+            accept(new CrawlResult(Jsoup.parse(webDriver.getPageSource(), crawlDomain), depth));
         } catch (Exception e) {
             logger.warn("크롤링에 실패하였습니다. url : {}", validUrl, e);
         }

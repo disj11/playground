@@ -3,17 +3,21 @@ package crawler;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 
-import java.util.function.Consumer;
-
-public class AnchorImageCrawler {
-    private final ImageCrawler crawler;
-
-    public AnchorImageCrawler(WebDriverBase driver) {
-        this.crawler = new ImageCrawler(driver);
+public abstract class AnchorImageCrawler extends ImageCrawler {
+    public AnchorImageCrawler(WebDriverBase driver, ImageCrawlingOptions options) {
+        super(driver, options);
     }
 
-    public void start(ImageCrawlingOptions options, Consumer<AnchorImageCrawlResult> consumer) {
-        crawler.start(options, imageElement -> consumer.accept(new AnchorImageCrawlResult(imageElement, parent(imageElement))));
+    public abstract void accept(AnchorImageCrawlResult result);
+
+    @Override
+    public void accept(ImageCrawlResult result) {
+        accept(new AnchorImageCrawlResult(
+                result.getDocument(),
+                result.getDepth(),
+                result.getImageElement(),
+                parent(result.getImageElement())
+        ));
     }
 
     private Element parent(Element elem) {

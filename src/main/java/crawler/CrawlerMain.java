@@ -1,15 +1,20 @@
 package crawler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.EnumSet;
 
 public class CrawlerMain {
-    private static final Logger logger = LoggerFactory.getLogger(CrawlerMain.class);
     public static void main(String[] args) {
         try (WebDriverBase driverBase = new WebDriverBase()) {
-            AnchorImageCrawler crawler = new AnchorImageCrawler(driverBase);
             ImageCrawlingOptions options = new ImageCrawlingOptions("https://www.naver.com");
-            crawler.start(options, result -> System.out.println("src : " + result.getImgSrc() + ", href : " + result.getAnchorHref()));
+            options.setExtensions(EnumSet.of(ImageExtension.PNG));
+
+            AnchorImageCrawler crawler = new AnchorImageCrawler(driverBase, options) {
+                @Override
+                public void accept(AnchorImageCrawlResult result) {
+                    System.out.println("src : " + result.getImageSrc() + ", href : " + result.getAnchorHref());
+                }
+            };
+            crawler.start();
         }
     }
 }

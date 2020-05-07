@@ -1,26 +1,18 @@
 package crawler;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-public class AnchorImageCrawlResult {
-    private final Element imgElement;
+public class AnchorImageCrawlResult extends ImageCrawlResult {
     private final Element anchorElement;
 
-    public AnchorImageCrawlResult(Element imgElement, Element anchorElement) {
-        this.imgElement = imgElement;
+    public AnchorImageCrawlResult(Document document, int depth, Element imageElement, Element anchorElement) {
+        super(document, depth, imageElement);
         this.anchorElement = anchorElement;
-    }
-
-    public Element getImgElement() {
-        return imgElement;
     }
 
     public Element getAnchorElement() {
         return anchorElement;
-    }
-
-    public String getImgSrc() {
-        return imgElement.absUrl("src");
     }
 
     public String getAnchorHref() {
