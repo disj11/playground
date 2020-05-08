@@ -1,6 +1,9 @@
 package crawler;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +46,7 @@ public abstract class Crawler<T extends CrawlingOptions> implements Consumer<Cra
                     continue;
                 }
 
-                crawl(url, crawlDomain, currentDepth);
+                crawl(url, crawlDomain, currentDepth, urlQueue);
             }
 
             currentDepth++;
@@ -69,11 +72,21 @@ public abstract class Crawler<T extends CrawlingOptions> implements Consumer<Cra
         return false;
     }
 
-    protected void crawl(String validUrl, String crawlDomain, int depth) {
+    protected void crawl(String validUrl, String crawlDomain, int depth, Queue<String> urlQueue) {
         try {
             WebDriver webDriver = driver.getDriver();
             webDriver.get(validUrl);
-            accept(new CrawlResult(Jsoup.parse(webDriver.getPageSource(), crawlDomain), depth));
+
+            Document document = Jsoup.parse(webDriver.getPageSource(), crawlDomain);
+            accept(new CrawlResult(document, depth));
+
+            Elements detectedPages = document.select("a");
+            for (Element page : detectedPages) {
+                String pageUrl = page.absUrl("href");
+                if (valid(crawlDomain, pageUrl)) {
+                    urlQueue.add(pageUrl);
+                }
+            }
         } catch (Exception e) {
             logger.warn("크롤링에 실패하였습니다. url : {}", validUrl, e);
         }
