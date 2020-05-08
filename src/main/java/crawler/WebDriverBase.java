@@ -14,6 +14,7 @@ public class WebDriverBase implements AutoCloseable {
 
         ChromeOptions options = new ChromeOptions();
         options.setHeadless(true);
+        options.addArguments("--no-sandbox", "--disable-dev-shm-usage");
         this.driver = new ChromeDriver(options);
     }
 
