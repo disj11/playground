@@ -33,7 +33,8 @@ public class BackgroundRemoval {
         Imgproc.Canny(dest, detectedEdges, threshold, threshold * 3, 3, false);
 
         // 팽창
-        Imgproc.dilate(detectedEdges, detectedEdges, new Mat(), new Point(-1, -1), 3);
+        Size dilateSize = new Size(src.width() / 160d, src.height() / 160d);
+        Imgproc.dilate(detectedEdges, detectedEdges, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, dilateSize), new Point(-1, -1), 3);
 
         // 오브젝트 외곽선 구하기
         List<MatOfPoint> contours = new ArrayList<>();
