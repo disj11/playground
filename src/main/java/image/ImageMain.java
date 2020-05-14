@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class ImageMain {
     public static void main(String[] args) {
-        String format = "png";
+        String format = "jpg";
         File source = Paths.get("C:\\Users\\user\\Downloads", "image." + format).toFile();
         File target = Paths.get("C:\\Users\\user\\Downloads", "image_compression." + format).toFile();
 
