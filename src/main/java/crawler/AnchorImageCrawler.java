@@ -4,19 +4,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 
 public abstract class AnchorImageCrawler extends ImageCrawler {
-    public AnchorImageCrawler(WebDriverBase driver, ImageCrawlingOptions options) {
+    public AnchorImageCrawler(WebDriverBase driver, MediaCrawlingOptions options) {
         super(driver, options);
     }
 
-    public abstract void accept(AnchorImageCrawlResult result);
+    public abstract void accept(AnchorImageCrawlingResult result);
 
     @Override
-    public void accept(ImageCrawlResult result) {
-        accept(new AnchorImageCrawlResult(
+    public void accept(MediaCrawlingResult result) {
+        accept(new AnchorImageCrawlingResult(
                 result.getDocument(),
                 result.getDepth(),
-                result.getImageElement(),
-                parent(result.getImageElement())
+                result.getElement(),
+                parent(result.getElement())
         ));
     }
 

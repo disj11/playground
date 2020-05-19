@@ -2,11 +2,11 @@ package crawler;
 
 import org.jsoup.nodes.Document;
 
-public class CrawlResult {
+public class CrawlingResult {
     private final Document document;
     private final int depth;
 
-    public CrawlResult(Document document, int depth) {
+    public CrawlingResult(Document document, int depth) {
         this.document = document;
         this.depth = depth;
     }

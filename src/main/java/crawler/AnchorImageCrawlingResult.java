@@ -3,11 +3,11 @@ package crawler;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-public class AnchorImageCrawlResult extends ImageCrawlResult {
+public class AnchorImageCrawlingResult extends MediaCrawlingResult {
     private final Element anchorElement;
 
-    public AnchorImageCrawlResult(Document document, int depth, Element imageElement, Element anchorElement) {
-        super(document, depth, imageElement);
+    public AnchorImageCrawlingResult(Document document, int depth, Element element, Element anchorElement) {
+        super(document, depth, element);
         this.anchorElement = anchorElement;
     }
 

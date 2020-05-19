@@ -5,18 +5,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-import java.util.function.Consumer;
+import java.util.*;
 import java.util.regex.Pattern;
 
-public abstract class Crawler<T extends CrawlingOptions> implements Consumer<CrawlResult> {
-    private static final Logger logger = LoggerFactory.getLogger(Crawler.class);
+public abstract class Crawler<T extends CrawlingOptions> implements java.util.function.Consumer<CrawlingResult> {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Crawler.class);
     private static final Pattern filters = Pattern.compile(".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf|rm|smil|wmv|swf|wma|zip|rar|gz))$");
     protected final WebDriverBase driver;
     protected final T options;
@@ -26,7 +20,21 @@ public abstract class Crawler<T extends CrawlingOptions> implements Consumer<Cra
         this.options = options;
     }
 
+    public void prestart() {
+        //
+    }
+
+    public void hook() {
+        //
+    }
+
+    public boolean stop() {
+        return false;
+    }
+
     public void start() {
+        prestart();
+
         Set<String> visitedSet = new HashSet<>();
         Queue<String> urlQueue = new LinkedList<>();
         urlQueue.add(options.getUrl());
@@ -34,18 +42,23 @@ public abstract class Crawler<T extends CrawlingOptions> implements Consumer<Cra
         String crawlDomain = getCrawlDomain(options.getUrl());
         int currentDepth = 0;
 
-        while (!urlQueue.isEmpty()) {
+        while (!urlQueue.isEmpty() && !stop()) {
             if (currentDepth > options.getMaxDepth()) {
                 break;
             }
 
             int queueSize = urlQueue.size();
             for (int i = 0; i < queueSize; i++) {
+                if (stop()) {
+                    break;
+                }
+
                 String url = urlQueue.poll();
                 if (!valid(crawlDomain, url) || visited(visitedSet, url)) {
                     continue;
                 }
 
+                logger.info("visit url : {}, depth : {}", url, currentDepth);
                 crawl(url, crawlDomain, currentDepth, urlQueue);
             }
 
@@ -59,7 +72,7 @@ public abstract class Crawler<T extends CrawlingOptions> implements Consumer<Cra
         return url.substring(0, endIndex);
     }
 
-    private boolean valid(String crawlDomain, String url) {
+    protected boolean valid(String crawlDomain, String url) {
         return url != null && url.startsWith(crawlDomain) && !filters.matcher(url).matches();
     }
 
@@ -76,9 +89,10 @@ public abstract class Crawler<T extends CrawlingOptions> implements Consumer<Cra
         try {
             WebDriver webDriver = driver.getDriver();
             webDriver.get(validUrl);
+            hook();
 
             Document document = Jsoup.parse(webDriver.getPageSource(), crawlDomain);
-            accept(new CrawlResult(document, depth));
+            accept(new CrawlingResult(document, depth));
 
             Elements detectedPages = document.select("a");
             for (Element page : detectedPages) {

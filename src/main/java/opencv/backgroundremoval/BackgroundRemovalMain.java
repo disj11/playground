@@ -9,8 +9,8 @@ public class BackgroundRemovalMain {
         // Initialize the OpenCV library
         OpenCV.loadShared();
 
-        String imagePath = "C:\\Users\\user\\Downloads\\image.png";
-        String savePath = "C:\\Users\\user\\Downloads\\image_bg_remove.png";
+        String imagePath = "C:\\Users\\user\\Downloads\\image.jpg";
+        String savePath = "C:\\Users\\user\\Downloads\\image_bg_remove.jpg";
 
         Mat source = OpenCVUtils.loadImage(imagePath);
         Mat dest = new Mat();

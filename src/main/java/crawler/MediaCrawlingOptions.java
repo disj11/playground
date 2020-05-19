@@ -1,21 +1,22 @@
 package crawler;
 
-import java.util.EnumSet;
+import java.util.List;
 
-public class ImageCrawlingOptions extends CrawlingOptions {
-    private EnumSet<ImageExtension> extensions;
+public class MediaCrawlingOptions extends CrawlingOptions {
+    private java.util.List<String> extensions;
     private long minBytes;
     private long maxBytes;
+    private int limit;
 
-    public ImageCrawlingOptions(String url) {
+    public MediaCrawlingOptions(String url) {
         super(url);
     }
 
-    public EnumSet<ImageExtension> getExtensions() {
+    public List<String> getExtensions() {
         return extensions;
     }
 
-    public void setExtensions(EnumSet<ImageExtension> extensions) {
+    public void setExtensions(List<String> extensions) {
         this.extensions = extensions;
     }
 
@@ -33,5 +34,13 @@ public class ImageCrawlingOptions extends CrawlingOptions {
 
     public void setMaxBytes(long maxBytes) {
         this.maxBytes = maxBytes;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 }
