@@ -6,6 +6,10 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
+/**
+ * 이미지 / 동영상 크롤링
+ * allowContentType 메서드를 구현하여 어떤 contentType을 크롤링 할 지 지정
+ */
 public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MediaCrawler.class);
     private int detectedCount;

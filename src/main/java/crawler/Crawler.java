@@ -9,6 +9,10 @@ import org.openqa.selenium.WebDriver;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/**
+ * 페이지 내에 존재하는 페이지 링크를 검색하고, 검색된 페이지 모두 방문
+ * @param <T> 크롤링 옵션
+ */
 public abstract class Crawler<T extends CrawlingOptions> implements java.util.function.Consumer<CrawlingResult> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Crawler.class);
     private static final Pattern filters = Pattern.compile(".*(\\.(css|js|mid|mp2|mp3|mp4|wav|avi|mov|mpeg|ram|m4v|pdf|rm|smil|wmv|swf|wma|zip|rar|gz))$");

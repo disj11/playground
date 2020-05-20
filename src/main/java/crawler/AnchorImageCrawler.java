@@ -3,6 +3,9 @@ package crawler;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 
+/**
+ * 이미지와 이미지에 걸려있는 링크를 크롤링
+ */
 public abstract class AnchorImageCrawler extends ImageCrawler {
     public AnchorImageCrawler(WebDriverBase driver, MediaCrawlingOptions options) {
         super(driver, options);

@@ -5,6 +5,9 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+/**
+ * 인스타그램 / 페이스북 크롤링
+ */
 public abstract class SnsCrawler extends AnchorImageCrawler {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SnsCrawler.class);
 
