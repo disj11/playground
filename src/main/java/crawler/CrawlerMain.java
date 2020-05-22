@@ -29,7 +29,7 @@ public class CrawlerMain {
             AnchorImageCrawler crawler = new AnchorImageCrawler(driverBase, options) {
                 @Override
                 public void accept(AnchorImageCrawlingResult result) {
-                    resourceUrlList.add(result.getAbsSrc());
+                    resourceUrlList.add(result.getDetectedUrl());
                 }
             };
             crawler.start();

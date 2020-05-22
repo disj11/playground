@@ -1,8 +1,12 @@
 package crawler;
 
+import org.jsoup.internal.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 이미지 / 동영상 크롤링
@@ -10,6 +14,7 @@ import org.jsoup.select.Elements;
  */
 public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MediaCrawler.class);
+    private static final Pattern pattern = Pattern.compile("url\\((?!['\"]?(?:data|http):)['\"]?([^'\"\\)]*)['\"]?\\)");
     private int detectedCount;
 
     public MediaCrawler(WebDriverBase driver, MediaCrawlingOptions options) {
@@ -31,6 +36,11 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
 
     @Override
     public void accept(CrawlingResult result) {
+        crawlSrcElements(result);
+        crawlBackgroundElements(result);
+    }
+
+    private void crawlSrcElements(CrawlingResult result) {
         Document document = result.getDocument();
         Elements elements = document.getElementsByAttribute("src");
 
@@ -45,7 +55,30 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
             }
 
             detectedCount++;
-            accept(new MediaCrawlingResult(result.getDocument(), result.getDepth(), element));
+            accept(new MediaCrawlingResult(result.getDocument(), result.getDepth(), element, url));
+        }
+    }
+
+    private void crawlBackgroundElements(CrawlingResult result) {
+        Document document = result.getDocument();
+        Elements elements = document.select("*[style*='background']");
+        for (Element element : elements) {
+            if (stop()) {
+                break;
+            }
+
+            Matcher matcher = pattern.matcher(element.attr("style"));
+            if (!matcher.find()) {
+                continue;
+            }
+
+            String url = StringUtil.resolve(element.baseUri(), matcher.group(1));
+            if (!valid(url)) {
+                continue;
+            }
+
+            detectedCount++;
+            accept(new MediaCrawlingResult(result.getDocument(), result.getDepth(), element, url));
         }
     }
 

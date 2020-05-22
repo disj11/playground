@@ -19,6 +19,7 @@ public abstract class AnchorImageCrawler extends ImageCrawler {
                 result.getDocument(),
                 result.getDepth(),
                 result.getElement(),
+                result.getDetectedUrl(),
                 parent(result.getElement())
         ));
     }
