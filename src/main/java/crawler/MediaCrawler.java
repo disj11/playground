@@ -4,8 +4,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-
 /**
  * 이미지 / 동영상 크롤링
  * allowContentType 메서드를 구현하여 어떤 contentType을 크롤링 할 지 지정
@@ -56,7 +54,7 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
             return allowContentType(CrawlerUtils.getContentType(url)) &&
                     CrawlerUtils.validExt(url, options.getExtensions()) &&
                     CrawlerUtils.validCapacity(url, options.getMinBytes(), options.getMaxBytes());
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.warn("Content-Length 확인에 실패하였습니다. url : {}", url);
             return false;
         }

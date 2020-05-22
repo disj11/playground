@@ -4,7 +4,6 @@ import file.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +49,7 @@ public class CrawlerMain {
 
                     String fileExtension = url.substring(url.indexOf('.', url.lastIndexOf('/') + 1));
                     FileUtils.addToZipFile(zos, is, i++ + fileExtension);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.error("파일 다운로드 실패 : {}", url, e);
                 }
             }
