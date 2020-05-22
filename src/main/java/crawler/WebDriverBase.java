@@ -29,6 +29,6 @@ public class WebDriverBase implements AutoCloseable {
 
     @Override
     public void close() {
-        this.driver.close();
+        this.driver.quit();
     }
 }
