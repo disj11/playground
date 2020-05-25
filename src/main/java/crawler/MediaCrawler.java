@@ -67,12 +67,7 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
                 break;
             }
 
-            Matcher matcher = pattern.matcher(element.attr("style"));
-            if (!matcher.find()) {
-                continue;
-            }
-
-            String url = StringUtil.resolve(element.baseUri(), matcher.group(1));
+            String url = getAbsUrl(element);
             if (!valid(url)) {
                 continue;
             }
@@ -84,12 +79,30 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
 
     private boolean valid(String url) {
         try {
+            if (url == null || "".equals(url.trim())) {
+                return false;
+            }
+
             return allowContentType(CrawlerUtils.getContentType(url)) &&
                     CrawlerUtils.validExt(url, options.getExtensions()) &&
                     CrawlerUtils.validCapacity(url, options.getMinBytes(), options.getMaxBytes());
         } catch (Exception e) {
             logger.warn("Content-Length 확인에 실패하였습니다. url : {}", url);
             return false;
+        }
+    }
+
+    private String getAbsUrl(Element element) {
+        try {
+            Matcher matcher = pattern.matcher(element.attr("style"));
+            if (!matcher.find()) {
+                return "";
+            }
+
+            return StringUtil.resolve(element.baseUri(), matcher.group(1));
+        } catch (Exception e) {
+            logger.warn("absolute url 을 구할 수 없음", e);
+            return "";
         }
     }
 }
