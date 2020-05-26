@@ -4,6 +4,8 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.regex.Pattern;
 
 public class CrawlerUtils {
@@ -31,6 +33,34 @@ public class CrawlerUtils {
 
     public static String getContentType(String url) throws IOException {
         return getHeader(url, "Content-Type");
+    }
+
+    public static String resolve(String baseUrl, String relUrl) {
+        try {
+            URL base;
+            try {
+                base = new URL(baseUrl);
+            } catch (MalformedURLException var5) {
+                URL abs = new URL(relUrl);
+                return abs.toExternalForm();
+            }
+
+            return resolve(base, relUrl).toExternalForm();
+        } catch (MalformedURLException var6) {
+            return "";
+        }
+    }
+
+    public static URL resolve(URL base, String relUrl) throws MalformedURLException {
+        if (relUrl.startsWith("?")) {
+            relUrl = base.getPath() + relUrl;
+        }
+
+        if (relUrl.indexOf(46) == 0 && base.getFile().indexOf(47) != 0) {
+            base = new URL(base.getProtocol(), base.getHost(), base.getPort(), "/" + base.getFile());
+        }
+
+        return new URL(base, relUrl);
     }
 
     private static long getContentLength(String url) throws IOException {

@@ -1,20 +1,21 @@
 package crawler;
 
-import org.jsoup.internal.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * 이미지 / 동영상 크롤링
- * allowContentType 메서드를 구현하여 어떤 contentType을 크롤링 할 지 지정
- */
 public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MediaCrawler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MediaCrawler.class);
     private static final Pattern pattern = Pattern.compile("url\\((?!['\"]?(?:data|http):)['\"]?([^'\"\\)]*)['\"]?\\)");
+
+    private Set<String> detectedUrlSet;
     private int detectedCount;
 
     public MediaCrawler(WebDriverBase driver, MediaCrawlingOptions options) {
@@ -27,6 +28,7 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
     @Override
     public void prestart() {
         detectedCount = 0;
+        detectedUrlSet = new HashSet<>();
     }
 
     @Override
@@ -54,8 +56,7 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
                 continue;
             }
 
-            detectedCount++;
-            accept(new MediaCrawlingResult(result.getDocument(), result.getDepth(), element, url));
+            accept(result, element, url);
         }
     }
 
@@ -72,14 +73,19 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
                 continue;
             }
 
-            detectedCount++;
-            accept(new MediaCrawlingResult(result.getDocument(), result.getDepth(), element, url));
+            accept(result, element, url);
         }
+    }
+
+    private void accept(CrawlingResult result, Element element, String url) {
+        detectedUrlSet.add(url);
+        detectedCount++;
+        accept(new MediaCrawlingResult(result.getDocument(), result.getDepth(), element, url));
     }
 
     private boolean valid(String url) {
         try {
-            if (url == null || "".equals(url.trim())) {
+            if (url == null || "".equals(url.trim()) || detectedUrlSet.contains(url)) {
                 return false;
             }
 
@@ -99,7 +105,7 @@ public abstract class MediaCrawler extends Crawler<MediaCrawlingOptions> {
                 return "";
             }
 
-            return StringUtil.resolve(element.baseUri(), matcher.group(1));
+            return CrawlerUtils.resolve(element.baseUri(), matcher.group(1));
         } catch (Exception e) {
             logger.warn("absolute url 을 구할 수 없음", e);
             return "";
