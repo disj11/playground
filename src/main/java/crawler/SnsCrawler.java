@@ -42,7 +42,9 @@ public abstract class SnsCrawler extends AnchorImageCrawler {
                 }
 
                 if (i != maxNumberOfPaging - 1) {
-                    paging();
+                    if (!paging()) {
+                        break;
+                    }
                 }
             }
         } catch (Exception e) {
