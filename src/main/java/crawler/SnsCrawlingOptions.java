@@ -8,7 +8,7 @@ public class SnsCrawlingOptions extends MediaCrawlingOptions {
     private int maxNumberOfPaging;
 
     public int getMaxNumberOfPaging() {
-        return maxNumberOfPaging;
+        return Math.max(maxNumberOfPaging, 1);
     }
 
     public void setMaxNumberOfPaging(int maxNumberOfPaging) {

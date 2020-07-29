@@ -28,7 +28,7 @@ public abstract class SnsCrawler extends AnchorImageCrawler {
             webDriver.get(validUrl);
             hook();
 
-            int maxNumberOfPaging = Math.max(getMaxNumberOfPaging(), 1);
+            int maxNumberOfPaging = getMaxNumberOfPaging();
             for (int i = 0; i < maxNumberOfPaging; i++) {
                 Document document = Jsoup.parse(webDriver.getPageSource(), crawlDomain);
                 accept(new CrawlingResult(document, depth));
