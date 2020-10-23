@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
+/**
+ * @see <a href="https://programmers.co.kr/learn/courses/30/lessons/43163">단어 변환</a>
+ */
 public class ChangeWord {
     public static int solution(String begin, String target, String[] words) {
         Set<String> visited = new HashSet<>();
