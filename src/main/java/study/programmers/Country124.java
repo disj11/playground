@@ -13,16 +13,11 @@ public class Country124 {
             remainder = num % 3;
             num /= 3;
 
-            if (num == 0) {
-                answer.insert(0, remainder);
-                break;
+            if (remainder == 0) {
+                answer.insert(0, "4");
+                num -= 1;
             } else {
-                if (remainder == 0) {
-                    answer.insert(0, "4");
-                    num -= 1;
-                } else {
-                    answer.insert(0, remainder);
-                }
+                answer.insert(0, remainder);
             }
         }
 
